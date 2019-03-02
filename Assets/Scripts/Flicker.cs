@@ -23,16 +23,18 @@ public class Flicker : MonoBehaviour
     public float randomFlickerIdle()
     {
         float intensity;
-        intensity = Random.Range(150f, 220f);
-        if (intensity > 200f) flickerWait += .5f;
+        intensity = Random.Range(10f, 20f);
+        if (intensity > 15f) flickerWait += .8f;
+        //Debug.Log(intensity);
         return intensity;
     }
     public float randomFlickerMoveing()
     {
         transform.hasChanged = false;
         float intensity;
-        intensity = Random.Range(50f, 150f);
-        if (intensity < 100f) flickerWait += .5f;
+        intensity = Random.Range(5f, 10f);
+        if (intensity < 7f) flickerWait += .8f;
+        //Debug.Log(intensity);
         return intensity;
     }
 }

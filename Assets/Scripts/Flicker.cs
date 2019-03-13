@@ -6,18 +6,27 @@ public class Flicker : MonoBehaviour
 {
     public Light Match;
 
+    public float LifeSpan;
+
     float flickerWait = 0f;
+
+    private void Awake()
+    {
+        LifeSpan = getLifeSpan();
+    }
 
     void Update()
     {
-        
-        if (flickerWait <= 0f)
+
+        if (flickerWait <= 0f && LifeSpan > 2)
         {
             if (transform.hasChanged) Match.intensity = randomFlickerMoveing();
             else Match.intensity = randomFlickerIdle();
             flickerWait = Random.Range(.1f, .2f);
         }
+        else Match.intensity = 2 * LifeSpan;
         flickerWait -= Time.deltaTime;
+        LifeSpan -= Time.deltaTime;
     }
 
     public float randomFlickerIdle()
@@ -36,5 +45,9 @@ public class Flicker : MonoBehaviour
         if (intensity < 7f) flickerWait += .8f;
         //Debug.Log(intensity);
         return intensity;
+    }
+    private float getLifeSpan()
+    {
+        return Random.Range(5f, 7f);
     }
 }

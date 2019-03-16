@@ -6,24 +6,22 @@ public class LightFreezeAI : MonoBehaviour
 {
     public GameObject player;
 
+    public UnityEngine.AI.NavMeshAgent agent;
+
     float speed = 5;
 
     // Update is called once per frame
     void Update()
     {
-        gameObject.GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
         //if(playerIsInRoom)
         try
         {
-            if (Vector3.Distance(FindObjectOfType<Light>().transform.position,transform.position) > FindObjectOfType<Light>().range) Lerp();
+            if (Vector3.Distance(FindObjectOfType<Light>().transform.position, transform.position) > FindObjectOfType<Light>().range)
+            {
+                agent.Stop();
+                agent.isStopped = true;
+            }  
         }
-        catch { Lerp(); }
-    }
-
-    public void Lerp()
-    {
-        Vector3 direction = player.transform.position - transform.position;
-        direction.y = 0;
-        transform.Translate((direction).normalized * Time.deltaTime * speed);
+        catch { agent.destination = player.transform.position; }
     }
 }

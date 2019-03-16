@@ -8,20 +8,20 @@ public class LightFreezeAI : MonoBehaviour
 
     public UnityEngine.AI.NavMeshAgent agent;
 
-    float speed = 5;
-
     // Update is called once per frame
     void Update()
     {
         //if(playerIsInRoom)
         try
         {
-            if (Vector3.Distance(FindObjectOfType<Light>().transform.position, transform.position) > FindObjectOfType<Light>().range)
+            if (Vector3.Distance(FindObjectOfType<Light>().transform.position, transform.position) < FindObjectOfType<Light>().range)
             {
-                agent.Stop();
-                agent.isStopped = true;
+                //agent.speed = 0;
+                //agent.ResetPath();
+                
+                agent.destination = transform.position;
             }  
         }
-        catch { agent.destination = player.transform.position; }
+        catch { agent.destination = player.transform.position; agent.speed = 3.5f; }
     }
 }

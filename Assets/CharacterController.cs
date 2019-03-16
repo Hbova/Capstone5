@@ -46,6 +46,7 @@ public class CharacterController : MonoBehaviour
     public Vector3 GetDestination()
     {
         Vector3 direction = new Vector3();
+        float run;
         if (Input.GetKey(KeyCode.W))
         {
             direction += Vector3.forward;
@@ -62,7 +63,12 @@ public class CharacterController : MonoBehaviour
         {
             //transform.eulerAngles += new Vector3(0f, 1f, 0f);
         }
-        return direction * Time.deltaTime * 8;
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            run = 2f;
+        }
+        else run = 1;
+        return direction * Time.deltaTime * 8 * run;
     }
 
     public void RotateDestination(Vector3 direction)

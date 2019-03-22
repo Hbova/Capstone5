@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterController : MonoBehaviour
+public class CharacterControllerAddition : MonoBehaviour
 {
     public GameObject match;
     private GameObject instantiatedMatch;
@@ -16,10 +16,22 @@ public class CharacterController : MonoBehaviour
 
     public Transform fingers;
 
+    private RaycastHit currentHit;
+
+    public IMoveableObject clickedObjHeld;
+
+    private float wait = -1;
+    
+
+    private void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+    }
 
     // Update is called once per frame
     void Update()
     {
+        if (wait >= 0) wait -= Time.deltaTime;
         if (instantiatedMatch == null)
         {
             if (Input.GetKeyDown(KeyCode.Q)) LightMatch();
@@ -32,6 +44,26 @@ public class CharacterController : MonoBehaviour
         }
         RotateDestination(GetDestination());
         agent.destination =  agentTarget.position;
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out currentHit, Mathf.Infinity, LayerMask.GetMask("Default")))
+        {
+            IMoveableObject clickedObj = currentHit.collider.GetComponent<IMoveableObject>();
+            if (clickedObj != null && wait < 0)
+            {
+                if (Input.GetMouseButton(0) && !clickedObj.IsHeld())
+                {
+                    clickedObj.OnClicked();
+                    clickedObjHeld = clickedObj;
+                    wait = 2;
+                }
+                if (!clickedObj.IsHeld()) clickedObj.OnMouseHover();
+            } 
+        }
+        if (Input.GetMouseButtonDown(0) && clickedObjHeld != null && wait < 0)
+        {
+            clickedObjHeld.OnThrown();
+            clickedObjHeld = null;
+            wait = 2;
+        }
         if (Input.GetMouseButton(1))
         {
             var mouseMovement = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
@@ -57,11 +89,11 @@ public class CharacterController : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.A))
         {
-            //transform.eulerAngles -= new Vector3(0f,1f,0f);
+            //direction += Vector3.left;
         }
         if (Input.GetKey(KeyCode.D))
         {
-            //transform.eulerAngles += new Vector3(0f, 1f, 0f);
+            //direction += Vector3.right;
         }
         if (Input.GetKey(KeyCode.LeftShift))
         {

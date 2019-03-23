@@ -64,7 +64,7 @@ public class CharacterControllerAddition : MonoBehaviour
             clickedObjHeld = null;
             wait = 2;
         }
-        if (Input.GetMouseButton(1))
+        if (!Input.GetMouseButton(1))
         {
             var mouseMovement = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 

@@ -9,6 +9,8 @@ public class InteractableObject : MonoBehaviour , IMoveableObject
 
     public float ThrowForce = 10;
 
+    public AnimationCurve mouseSensitivityCurve = new AnimationCurve(new Keyframe(0f, 0.5f, 0f, 5f), new Keyframe(1f, 2.5f, 0f, 0f));
+
     float LerpSpeed = 5;
 
     public bool Held = false;
@@ -21,7 +23,18 @@ public class InteractableObject : MonoBehaviour , IMoveableObject
     // Update is called once per frame
     void Update()
     {
-        if (Held) gameObject.GetComponent<Rigidbody>().MovePosition(Vector3.Lerp(transform.position, playerHand.position, Time.deltaTime * LerpSpeed));//transform.Translate(GetDirection() / LerpSpeed);
+        if (Held)
+        {
+            gameObject.GetComponent<Rigidbody>().MovePosition(Vector3.Lerp(transform.position, playerHand.position, Time.deltaTime * LerpSpeed));
+            if (Input.GetMouseButton(1))
+            {
+                var mouseMovement = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+
+                var mouseSensitivityFactor = mouseSensitivityCurve.Evaluate(mouseMovement.magnitude);
+
+                transform.eulerAngles += new Vector3(mouseMovement.y * mouseSensitivityFactor, mouseMovement.x * mouseSensitivityFactor, 0f);
+            }
+        }
     }
 
     public void OnClicked()

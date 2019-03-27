@@ -20,8 +20,11 @@ public class CharacterControllerAddition : MonoBehaviour
 
     public IMoveableObject clickedObjHeld;
 
+    public Transform heldObject;
+
     private float wait = -1;
-    
+
+    public bool changedTransform;
 
     private void Start()
     {
@@ -35,15 +38,16 @@ public class CharacterControllerAddition : MonoBehaviour
         if (instantiatedMatch == null)
         {
             if (Input.GetKeyDown(KeyCode.Q)) LightMatch();
-
         }
         else
         {
             if (Input.GetKeyDown(KeyCode.Q)) DropMatch();
-            if (instantiatedMatch.GetComponent<Flicker>().LifeSpan < 0) DestroyMatch();
         }
-        RotateDestination(GetDestination());
-        agent.destination =  agentTarget.position;
+        agentTarget.position = transform.position;
+        agentTarget.position = RotateDestination(GetDirection(), agentTarget.position);
+        agent.destination = agentTarget.position;
+        heldObject.position = RotateDestination(new Vector3(-.5f, 1.5f, 2.5f), transform.position);
+        heldObject.position = RotateDestination(GetDirection(), heldObject.position);
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out currentHit, Mathf.Infinity, LayerMask.GetMask("Default")))
         {
             IMoveableObject clickedObj = currentHit.collider.GetComponent<IMoveableObject>();
@@ -72,13 +76,14 @@ public class CharacterControllerAddition : MonoBehaviour
 
             sceneCamera.eulerAngles -= new Vector3( mouseMovement.y * mouseSensitivityFactor,0f,0f);
             transform.eulerAngles += new Vector3(0f,mouseMovement.x * mouseSensitivityFactor,0f);
+            if (!changedTransform) if (mouseMovement != new Vector2(0f, 0f)) changedTransform = true;
+            else changedTransform = false;
         }
     }
 
-    public Vector3 GetDestination()
+    public Vector3 GetDirection()
     {
         Vector3 direction = new Vector3();
-        float run;
         if (Input.GetKey(KeyCode.W))
         {
             direction += Vector3.forward;
@@ -97,39 +102,32 @@ public class CharacterControllerAddition : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            run = 2f;
+            agent.speed = 7f;
         }
-        else run = 1;
-        return direction * Time.deltaTime * 8 * run;
+        else agent.speed = 3.5f;
+        if (direction != new Vector3(0f, 0f, 0f)) changedTransform = true;
+        else changedTransform = false;
+        return direction;
     }
 
-    public void RotateDestination(Vector3 direction)
+    public Vector3 RotateDestination(Vector3 direction, Vector3 input)
     {
         Vector3 rotatedTranslation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z) * direction ;
 
-        agentTarget.transform.position += rotatedTranslation;
+        return input += rotatedTranslation;
     }
 
     public void DropMatch()
     {
         instantiatedMatch.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
         instantiatedMatch.transform.parent = null;
+        instantiatedMatch = null;
     }
 
     public void LightMatch()
     {
-        instantiatedMatch = Instantiate<GameObject>(match, getMatchTransform());
+        instantiatedMatch = Instantiate<GameObject>(match, fingers.transform);
         instantiatedMatch.transform.localScale -= new Vector3(.099f,.099f,.099f);
-        instantiatedMatch.transform.parent = getMatchTransform();
-    }
-
-    public void DestroyMatch()
-    {
-        Destroy(instantiatedMatch);
-    }
-
-    public Transform getMatchTransform()
-    {
-        return fingers.transform;
+        instantiatedMatch.transform.parent = fingers.transform;
     }
 }

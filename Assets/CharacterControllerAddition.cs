@@ -26,9 +26,30 @@ public class CharacterControllerAddition : MonoBehaviour
 
     public bool changedTransform;
 
+    //Animator Region.  Double click to expand. Tap Ctrl + M twice to shrink.
+    #region Animator Region
+
+    Animator myAnimator;
+
+    [SerializeField]
+    bool isWalking;
+    [SerializeField]
+    bool isRunning;
+    [SerializeField]
+    bool isJumping;
+
+    #endregion
+
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+
+        //Animator set-up
+        myAnimator = GetComponent<Animator>();
+
+        isWalking = false;
+        isRunning = false;
+        isJumping = false;
     }
 
     // Update is called once per frame
@@ -79,6 +100,11 @@ public class CharacterControllerAddition : MonoBehaviour
             if (!changedTransform) if (mouseMovement != new Vector2(0f, 0f)) changedTransform = true;
             else changedTransform = false;
         }
+
+        //updating animator variables to the bools within the character controller
+        myAnimator.SetBool("IsWalking", isWalking);
+        myAnimator.SetBool("IsRunning", isRunning);
+        myAnimator.SetBool("IsJumping", isJumping);
     }
 
     public Vector3 GetDirection()
@@ -86,7 +112,15 @@ public class CharacterControllerAddition : MonoBehaviour
         Vector3 direction = new Vector3();
         if (Input.GetKey(KeyCode.W))
         {
+            //for animator use
+            isWalking = true;
             direction += Vector3.forward;
+        }
+        //for animator use
+        else
+        {
+            isWalking = false;
+            isRunning = false;
         }
         if (Input.GetKey(KeyCode.S))
         {
@@ -102,9 +136,18 @@ public class CharacterControllerAddition : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.LeftShift))
         {
+            //for animator use
+            isRunning = true;
+
             agent.speed = 7f;
         }
-        else agent.speed = 3.5f;
+        else
+        {
+            //for animator use
+            isRunning = false;
+
+            agent.speed = 3.5f;
+        }
         if (direction != new Vector3(0f, 0f, 0f)) changedTransform = true;
         else changedTransform = false;
         return direction;

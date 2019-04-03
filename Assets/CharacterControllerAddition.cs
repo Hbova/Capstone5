@@ -22,6 +22,8 @@ public class CharacterControllerAddition : MonoBehaviour
 
     public Transform heldObject;
 
+    public GameObject myCharacter;
+
     private float wait = -1;
 
     public bool changedTransform;
@@ -45,7 +47,7 @@ public class CharacterControllerAddition : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
 
         //Animator set-up
-        myAnimator = GetComponent<Animator>();
+        myAnimator = myCharacter.GetComponent<Animator>();
 
         isWalking = false;
         isRunning = false;
@@ -139,7 +141,7 @@ public class CharacterControllerAddition : MonoBehaviour
             //for animator use
             isRunning = true;
 
-            agent.speed = 7f;
+            agent.speed = 14f;
         }
         else
         {

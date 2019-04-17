@@ -107,6 +107,8 @@ public class CharacterControllerAddition : MonoBehaviour
         myAnimator.SetBool("IsWalking", isWalking);
         myAnimator.SetBool("IsRunning", isRunning);
         myAnimator.SetBool("IsJumping", isJumping);
+        GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+        GetComponent<Rigidbody>().velocity = Vector3.zero;
     }
 
     public Vector3 GetDirection()

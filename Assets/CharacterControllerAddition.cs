@@ -79,7 +79,7 @@ public class CharacterControllerAddition : MonoBehaviour
                 if (Input.GetMouseButton(0) && !clickedObj.IsHeld())
                 {
                     clickedObj.OnClicked();
-                    clickedObjHeld = clickedObj;
+                    if (clickedObj.IsHeld())clickedObjHeld = clickedObj;
                     wait = 2;
                 }
                 if (!clickedObj.IsHeld()) clickedObj.OnMouseHover();
